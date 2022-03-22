@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  spring:
+    image: 'insecure-spring:latest'
+    build:
+      context: .
+      dockerfile: docker/spring/Dockerfile
+    container_name: spring
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    ports:
+      - "8082:8082"
+
+  angular:
+    image: 'insecure-angular:latest'
+    build:
+      context: .
+      dockerfile: docker/angular/Dockerfile
+    container_name: angular
+    depends_on:
+      - spring
+    ports:
+      - "80:80"
