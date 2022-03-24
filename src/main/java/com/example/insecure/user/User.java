@@ -15,16 +15,23 @@ public class User {
     private String password;
     private String name;
     private String email;
-
+    private boolean isAdmin = false;
 
 
     public User() {
     }
 
-    public User(Long id, String name, String email) {
+    public User(Long id, String name, String email, boolean isAdmin) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.isAdmin = isAdmin;
+    }
+
+    public User(String name, String email, boolean isAdmin) {
+        this.name = name;
+        this.email = email;
+        this.isAdmin = isAdmin;
     }
 
     public User(String name, String email) {
@@ -75,12 +82,17 @@ public class User {
         this.email = email;
     }
 
+    public boolean isAdmin() { return isAdmin; }
+
+    public void setAdmin(boolean admin) { isAdmin = admin; }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name +
-                ", email='" + email +
+                ", name=" + name +
+                ", email=" + email +
+                ", isAdmin=" + isAdmin +
                 '}';
     }
 }

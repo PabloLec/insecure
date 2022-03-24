@@ -9,6 +9,8 @@ import { UserFormComponent } from './user-form/user-form.component';
 import { UserService } from './service/user.service';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { CookieService } from "ngx-cookie-service";
+import { UserCookieService } from "./service/user-cookie.service";
 
 @NgModule({
   declarations: [
@@ -23,9 +25,10 @@ import { SignupComponent } from './signup/signup.component';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
-  providers: [UserService],
+  providers: [UserService, CookieService, UserCookieService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

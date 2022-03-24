@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import com.example.insecure.user.CustomUserDetailsService;
+import com.example.insecure.user.User;
+import com.example.insecure.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +24,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
     private DataSource dataSource;
+    private final UserRepository userRepository;
+
+    @Autowired
+    public WebSecurityConfig(UserRepository userRepository, DataSource dataSource) {
+        this.userRepository = userRepository;
+        this.dataSource = dataSource;
+    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -60,7 +69,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("name")
                 .successHandler(
                     ( request, response, authentication ) -> {
+                        String name = request.getParameter("name") ;
+                        User user = userRepository.findUserByName(name);
                         response.setStatus( HttpServletResponse.SC_OK );
+                        response.getWriter().write(user.toString());
+                        response.getWriter().flush();
                     }
                 )
                 .failureHandler(
