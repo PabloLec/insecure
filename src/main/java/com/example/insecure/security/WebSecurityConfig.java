@@ -1,5 +1,6 @@
 package com.example.insecure.security;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import com.example.insecure.user.CustomUserDetailsService;
@@ -48,15 +49,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/api/v1/user").authenticated()
+                .antMatchers("/api/v1/login").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
+                .loginPage("/api/v1/login")
                 .usernameParameter("name")
-                .defaultSuccessUrl("/api/v1/user")
-                .permitAll()
+                .successHandler(
+                    ( request, response, authentication ) -> {
+                        response.setStatus( HttpServletResponse.SC_OK );
+                    }
+                )
+                .failureHandler(
+                    ( request, response, authenticationException ) -> {
+                        response.setStatus( HttpServletResponse.SC_UNAUTHORIZED );
+                    }
+                )
                 .and()
-                .logout().logoutSuccessUrl("/").permitAll();
+                .logout().logoutSuccessUrl("/").permitAll()
+                .and()
+                .csrf().disable();
     }
 
 
