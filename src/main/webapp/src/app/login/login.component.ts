@@ -10,10 +10,10 @@ import {UserCookieService} from "../service/user-cookie.service";
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-
-  public badCredentials = false
+  badCredentials = false
   user: User;
   isConnected: boolean;
+  signupPassword: string | null;
 
   constructor(
     private route: ActivatedRoute,
@@ -21,15 +21,23 @@ export class LoginComponent {
     private userCookieService : UserCookieService,
     private userService: UserService) {
     this.user = new User();
+    this.route.queryParams.subscribe(params => {
+      console.log("params")
+      console.log(params)
+      this.signupPassword = params['signupPassword'];
+    });
+    this.route.queryParamMap.subscribe(params => {
+      this.signupPassword = params.get('signupPassword');
+    });
   }
 
   onSubmit() {
-    this.userService.login(this.user).subscribe(result => this.loginSuccessful(), error => this.badCredentials = true);
+    this.userService.login(this.user).subscribe((result: any) => this.loginSuccessful(result), error => this.badCredentials = true);
   }
 
-  loginSuccessful() {
-    this.userCookieService.user = this.user;
-    this.userCookieService.isConnected = true;
+  loginSuccessful(result: any) {
+    console.log(result);
+    this.userCookieService.setUser(result as User);
     this.router.navigate(['/users']);
   }
 }
