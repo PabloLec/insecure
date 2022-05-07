@@ -1,9 +1,11 @@
 package com.example.insecure.user;
 
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -11,10 +13,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService UserService;
+    private final UserRepository UserRepository;
 
     @Autowired
-    public UserController(UserService UserService) {
+    public UserController(UserService UserService, UserRepository UserRepository) {
         this.UserService = UserService;
+        this.UserRepository = UserRepository;
     }
 
     @GetMapping
@@ -22,9 +26,12 @@ public class UserController {
         return UserService.getUsers();
     }
 
-    @PostMapping
-    public void registerNewUser(@RequestBody User user) {
+    @PostMapping(produces = "application/json")
+    public String registerNewUser(@RequestBody User user) {
         UserService.addNewUser(user);
+
+        User savedUser = UserRepository.findUserByEmailWithFail(user.getEmail());
+        return new Gson().toJson(savedUser.getPassword());
     }
 
     @DeleteMapping(path = "{UserId}")

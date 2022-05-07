@@ -9,7 +9,6 @@ import { User } from '../model/user';
   styleUrls: ['./user-form.component.css']
 })
 export class UserFormComponent {
-
   user: User;
 
   constructor(
