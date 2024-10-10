@@ -5,7 +5,7 @@ COPY src /build/src/
 WORKDIR /build/
 RUN mvn clean package -DskipTests
 
-FROM openjdk:11-jre-slim
+FROM openjdk:24-ea-17-jdk-oraclelinux8
 
 WORKDIR /app
 
